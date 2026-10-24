@@ -38,6 +38,18 @@ async function sendTelegram(text: string) {
   return { ok: res.ok };
 }
 
+async function sendCrm(lead: { name: string; phone: string; creative: string; note: string }) {
+  const url = process.env.CRM_WEBHOOK_URL;
+  if (!url) return { skipped: true };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(lead),
+    signal: AbortSignal.timeout(8000), // CRM sekin bo'lsa ham javob kutib qolmaymiz
+  });
+  return { ok: res.ok };
+}
+
 async function sendCapi(params: {
   eventId: string;
   phone: string;
@@ -130,13 +142,26 @@ export async function POST(req: NextRequest) {
     (utmLine ? `\n📊 <b>Manba</b>\n${utmLine}\n` : "") +
     `\n🕒 ${new Date().toLocaleString("uz-UZ", { timeZone: "Asia/Tashkent" })}`;
 
-  const [tg, capi] = await Promise.allSettled([
+  const creative = utm.utm_content || utm.utm_campaign || utm.utm_source || "Sayt";
+  const note = [
+    `Shahar: ${city}`,
+    business && `Biznes: ${business}`,
+    ...Object.entries(utm).filter(([, v]) => v).map(([k, v]) => `${k}: ${String(v).slice(0, 80)}`),
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  // Har biri mustaqil: CRM yiqilsa ham Telegram va CAPI ishlayveradi
+  const [tg, capi, crm] = await Promise.allSettled([
     sendTelegram(text),
     sendCapi({ eventId, phone, name, city, fbp: body.fbp, fbc: body.fbc, ip, ua, url }),
+    sendCrm({ name, phone: `+${phone}`, creative: String(creative).slice(0, 80), note }),
   ]);
 
   if (tg.status === "rejected") console.error("Telegram xatosi:", tg.reason);
   if (capi.status === "rejected") console.error("CAPI xatosi:", capi.reason);
+  if (crm.status === "rejected") console.error("CRM xatosi:", crm.reason);
+  else if (crm.value.ok === false) console.error("CRM javobi muvaffaqiyatsiz");
 
   return NextResponse.json({ ok: true, eventId });
 }
