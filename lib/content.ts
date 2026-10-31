@@ -7,8 +7,8 @@ export const EVENT = {
   region: "Surxondaryo viloyati tadbirkorlari uchun",
   format: "Oflayn intensiv · 1 kun · 4 soat",
   cities: [
-    { city: "Denov", date: "31-oktabr", weekday: "shanba", iso: "2026-10-31T14:00:00+05:00" },
-    { city: "Termiz", date: "1-noyabr", weekday: "yakshanba", iso: "2026-11-01T14:00:00+05:00" },
+    { city: "Denov", date: "7-noyabr", weekday: "shanba", iso: "2026-11-07T14:00:00+05:00" },
+    { city: "Termiz", date: "8-noyabr", weekday: "yakshanba", iso: "2026-11-08T14:00:00+05:00" },
   ],
   time: "14:00–18:00",
 };
@@ -107,4 +107,53 @@ export const FAQ = [
   { q: "AI mening sohamga to'g'ri keladimi?", a: "Mebel, savdo, distribyutsiya, qurilish, ta'lim, meditsina — real keyslar bloki aynan shu savolga javob beradi. Har bir soha uchun aniq AI xodim misollari ko'rsatiladi." },
   { q: "Intensivdan keyin AI xodim ishlashda davom etadimi?", a: "Ha. Siz yasagan AI xodim Telegram'da ishlaydi va intensivdan keyin ham biznesingizda qoladi." },
   { q: "Joylar soni cheklanganmi?", a: "Ha. Amaliyot sifatli o'tishi uchun har bir shaharda joylar soni cheklangan. Joyni oldindan band qilib qo'yishni tavsiya qilamiz." },
+];
+
+// ───── Yangi dizayn (ai-xodimlar) bo'limlari uchun matnlar ─────
+
+export const CONTACT = { phone: "+998 99 999 00 38", tel: "+998999990038" };
+
+export const PRICE = { value: "197 000", currency: "so'm" };
+
+export const HERO_PROMISES = [
+  "O'z AI xodimlaringizni yarata olasiz;",
+  "O'zingizga mos CRM qura olasiz;",
+  "Mobil ilova va veb sayt yarata olasiz.",
+];
+
+export const BIO = [
+  "O'zbekiston Intellektual trenerlar federatsiyasi prezidenti",
+  "BM Akademiyasi asoschisi va rahbari",
+];
+
+export const PROJECT_LOGOS = [
+  { src: "/assets/web/aksaray.webp", alt: "Aksaray" },
+  { src: "/assets/web/yangi-denov.webp", alt: "Yangi Denov" },
+  { src: "/assets/web/v-logo.webp", alt: "Hamkor loyiha" },
+  { src: "/assets/web/asqar-mall.webp", alt: "Asqar Mall" },
+  { src: "/assets/web/mirzo-buildings.webp", alt: "Mirzo Buildings" },
+  { src: "/assets/web/caravan-mall.webp", alt: "Caravan Mall" },
+];
+
+export const DENOV_VIDEOS = [13, 14, 4, 5, 6, 7, 8, 9];
+
+export const PROBLEMS = [
+  { title: "Zamonaviy mutaxassis topilmaydi", text: "Sotuvchi, marketolog, SMM, dizayner, montajchi topish qiyin. Kuchli kadrlar esa Toshkentga ketib qoladi." },
+  { title: "Bor xodimni boshqarish qiyin", text: "Xodimlar mas'uliyatdan qochadi, tez-tez almashadi, yangi xodimni ishga moslashtirish tizimi yo'q." },
+  { title: "Biznesda tizim yo'q", text: "Hisob-kitob chalkash, shaxsiy pul bilan kompaniya puli aralashgan, foyda yoki zarar aniq emas." },
+  { title: "Mijoz qimmatlashdi, foyda kamaydi", text: "Raqobat kuchaygan, bitta mijozni jalb qilish narxi oshmoqda, marja pasaymoqda." },
+  { title: "Tadbirkor operatsion ishdan chiqa olmaydi", text: "Hamma ish egasiga bog'liq, biznesni raqamlar asosida boshqarishga vaqt qolmaydi." },
+  { title: "AI haqida tasavvur yo'q", text: "Ko'pchilik sun'iy intellektni oddiy chat deb o'ylaydi yoki «mening biznesimga mos kelmaydi» deydi." },
+];
+
+export const DAY_PROGRAM: { time: string; title: string; text?: string; hl?: boolean }[] = [
+  { time: "14:00", title: "Ochilish va tanishuv" },
+  { time: "14:20", title: "Sun'iy intellekt: imkoniyatlar va bozor", text: "Nega AI bu shunchaki chat emas" },
+  { time: "14:55", title: "Real biznes keyslar", text: "Video, CRM va ERP, sayt, mobil ilova va Telegram bot" },
+  { time: "15:40", title: "AI'ga to'g'ri topshiriq berish", text: "Formula va o'z biznesingiz uchun mashq" },
+  { time: "16:05", title: "Jonli demo: sahnada AI menejer", text: "Zaldagi tadbirkor biznesi uchun jonli yasaymiz" },
+  { time: "16:35", title: "Coffee break" },
+  { time: "16:55", title: "Amaliyot: har kim o'z AI xodimini yasaydi", text: "Sotuvchi, SMM yordamchi, HR yoki administrator", hl: true },
+  { time: "17:35", title: "1 oylik «AI orqali biznesni tizimlashtirish» kursi taqdimoti" },
+  { time: "17:55", title: "Bonus sovg'alar", text: "Dars oxirigacha o'tirgan ishtirokchilarga bonus beriladi", hl: true },
 ];

@@ -85,12 +85,10 @@ export default function LeadForm({ compact = false }: { compact?: boolean }) {
 
   if (state === "done") {
     return (
-      <div className="form-done" role="status">
-        <div className="form-done__icon" aria-hidden>✓</div>
-        <h3>Joyingiz band qilindi</h3>
-        <p>
-          Rahmat, {name.split(" ")[0]}! Menejerimiz tez orada <b>+998 {phone}</b> raqamiga qo&apos;ng&apos;iroq qilib,
-          tafsilotlarni aytadi.
+      <div className="ok" role="status">
+        <b>Rahmat, {name.split(" ")[0]}! Arizangiz qabul qilindi.</b>
+        <p style={{ marginTop: 6 }}>
+          Menejer tez orada <b className="ok-phone">+998 {phone}</b> raqamiga qo&apos;ng&apos;iroq qilib, aniq manzilni aytadi.
         </p>
       </div>
     );
@@ -98,54 +96,59 @@ export default function LeadForm({ compact = false }: { compact?: boolean }) {
 
   return (
     <form className={`lead-form${compact ? " lead-form--compact" : ""}`} onSubmit={submit} noValidate>
-      <label className="field">
-        <span>Ismingiz</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ism va familiya" autoComplete="name" required />
-      </label>
+      <div>
+        <label htmlFor="name">Ismingiz</label>
+        <input className="in" id="name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required />
+      </div>
 
-      <label className="field">
-        <span>Telefon raqamingiz</span>
+      <div>
+        <label htmlFor="phone">Telefon raqamingiz</label>
         <div className="phone">
-          <em>+998</em>
+          <span>+998</span>
           <input
+            id="phone"
+            type="tel"
             value={phone}
             onChange={(e) => setPhone(formatPhone(e.target.value))}
             placeholder="90 123 45 67"
-            inputMode="tel"
+            inputMode="numeric"
             autoComplete="tel-national"
             required
           />
         </div>
-      </label>
+      </div>
 
-      <fieldset className="field">
-        <span>Qaysi shaharda qatnashasiz?</span>
-        <div className="city-pick">
-          {EVENT.cities.map((c) => (
-            <label key={c.city} className={city === c.city ? "on" : ""}>
-              <input type="radio" name="city" value={c.city} checked={city === c.city} onChange={() => setCity(c.city)} />
-              <b>{c.city}</b>
-              <small>{c.date}</small>
-            </label>
+      <fieldset>
+        <legend>Qaysi shaharda qatnashasiz?</legend>
+        <div className="city">
+          {EVENT.cities.map((c, i) => (
+            <span key={c.city} style={{ display: "contents" }}>
+              <input type="radio" name="city" id={`c${i + 1}`} value={c.city} checked={city === c.city} onChange={() => setCity(c.city)} />
+              <label htmlFor={`c${i + 1}`}>
+                {c.city}
+                <small>{c.date}</small>
+              </label>
+            </span>
           ))}
         </div>
       </fieldset>
 
       {!compact && (
-        <label className="field">
-          <span>Biznesingiz sohasi <i>(ixtiyoriy)</i></span>
-          <input value={business} onChange={(e) => setBusiness(e.target.value)} placeholder="Masalan: mebel savdosi" />
-        </label>
+        <div>
+          <label htmlFor="business">
+            Biznesingiz sohasi <i className="opt">(ixtiyoriy)</i>
+          </label>
+          <input className="in" id="business" value={business} onChange={(e) => setBusiness(e.target.value)} placeholder="Masalan: mebel savdosi" />
+        </div>
       )}
 
       <input className="hp" tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} aria-hidden name="website" />
 
-      {error && <p className="form-error" role="alert">{error}</p>}
+      {error && <p className="err" role="alert">{error}</p>}
 
-      <button className="btn btn--gold btn--block" type="submit" disabled={state === "loading"}>
-        {state === "loading" ? "Yuborilmoqda…" : "Joyni band qilish"}
+      <button className="btn" type="submit" disabled={state === "loading"}>
+        {state === "loading" ? "Yuborilmoqda…" : "Joyimni band qilish"}
       </button>
-      <p className="form-note">Joylar cheklangan · Ma&apos;lumotlaringiz uchinchi shaxslarga berilmaydi</p>
     </form>
   );
 }
