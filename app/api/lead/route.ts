@@ -50,6 +50,25 @@ async function sendCrm(lead: { name: string; phone: string; creative: string; no
   return { ok: res.ok };
 }
 
+// Lid CRM (MCP server): JSON-RPC orqali add_lead tool'ini chaqiramiz
+async function sendCrmMcp(lead: { name: string; phone: string; creative: string; note: string; extra: Record<string, string> }) {
+  const url = process.env.CRM_MCP_URL;
+  if (!url) return { skipped: true };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: Date.now(),
+      method: "tools/call",
+      params: { name: "add_lead", arguments: { ...lead, source: "Sayt" } },
+    }),
+    signal: AbortSignal.timeout(8000),
+  });
+  const data = await res.json().catch(() => null);
+  return { ok: res.ok && !data?.error && !data?.result?.isError };
+}
+
 async function sendCapi(params: {
   eventId: string;
   phone: string;
@@ -152,16 +171,25 @@ export async function POST(req: NextRequest) {
     .join("\n");
 
   // Har biri mustaqil: CRM yiqilsa ham Telegram va CAPI ishlayveradi
-  const [tg, capi, crm] = await Promise.allSettled([
+  const [tg, capi, crm, crmMcp] = await Promise.allSettled([
     sendTelegram(text),
     sendCapi({ eventId, phone, name, city, fbp: body.fbp, fbc: body.fbc, ip, ua, url }),
     sendCrm({ name, phone: `+${phone}`, creative: String(creative).slice(0, 80), note }),
+    sendCrmMcp({
+      name,
+      phone: `+${phone}`,
+      creative: String(creative).slice(0, 80),
+      note,
+      extra: { city, ...(business ? { business } : {}), ...Object.fromEntries(Object.entries(utm).filter(([, v]) => v).map(([k, v]) => [k, String(v).slice(0, 80)])) },
+    }),
   ]);
 
   if (tg.status === "rejected") console.error("Telegram xatosi:", tg.reason);
   if (capi.status === "rejected") console.error("CAPI xatosi:", capi.reason);
   if (crm.status === "rejected") console.error("CRM xatosi:", crm.reason);
   else if (crm.value.ok === false) console.error("CRM javobi muvaffaqiyatsiz");
+  if (crmMcp.status === "rejected") console.error("CRM (MCP) xatosi:", crmMcp.reason);
+  else if (crmMcp.value.ok === false) console.error("CRM (MCP) javobi muvaffaqiyatsiz");
 
   return NextResponse.json({ ok: true, eventId });
 }
