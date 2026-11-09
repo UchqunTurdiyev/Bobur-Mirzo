@@ -88,12 +88,12 @@ async function sendCapi(params: {
   const user_data: Record<string, unknown> = {
     ph: [sha256(params.phone)],
     fn: [sha256(firstName)],
-    ct: [sha256(params.city.replace(/\s+/g, ""))],
     country: [sha256("uz")],
     external_id: [sha256(params.phone)],
     client_ip_address: params.ip,
     client_user_agent: params.ua,
   };
+  if (params.city) user_data.ct = [sha256(params.city.replace(/\s+/g, ""))];
   if (params.fbp) user_data.fbp = params.fbp;
   if (params.fbc) user_data.fbc = params.fbc;
 
@@ -106,7 +106,7 @@ async function sendCapi(params: {
         action_source: "website",
         event_source_url: params.url,
         user_data,
-        custom_data: { content_name: "AI xodimlar intensivi", city: params.city },
+        custom_data: { content_name: "30 kunda AI jamoa", ...(params.city ? { city: params.city } : {}) },
       },
     ],
   };
@@ -139,7 +139,6 @@ export async function POST(req: NextRequest) {
 
   if (name.length < 2) return NextResponse.json({ ok: false, error: "Ismingizni kiriting" }, { status: 422 });
   if (!/^998\d{9}$/.test(phone)) return NextResponse.json({ ok: false, error: "Telefon raqam noto'g'ri" }, { status: 422 });
-  if (!city) return NextResponse.json({ ok: false, error: "Shaharni tanlang" }, { status: 422 });
 
   const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || req.headers.get("x-real-ip") || undefined;
   const ua = req.headers.get("user-agent") || undefined;
@@ -153,17 +152,17 @@ export async function POST(req: NextRequest) {
 
   const pretty = `+${phone.slice(0, 3)} ${phone.slice(3, 5)} ${phone.slice(5, 8)} ${phone.slice(8, 10)} ${phone.slice(10)}`;
   const text =
-    `🟡 <b>Yangi lid — AI xodimlar intensivi</b>\n\n` +
+    `🟡 <b>Yangi lid — 30 kunda AI jamoa</b>\n\n` +
     `👤 <b>Ism:</b> ${esc(name)}\n` +
     `📞 <b>Telefon:</b> ${pretty}\n` +
-    `📍 <b>Shahar:</b> ${esc(city)}\n` +
+    (city ? `📍 <b>Shahar:</b> ${esc(city)}\n` : "") +
     (business ? `💼 <b>Biznes:</b> ${esc(business)}\n` : "") +
     (utmLine ? `\n📊 <b>Manba</b>\n${utmLine}\n` : "") +
     `\n🕒 ${new Date().toLocaleString("uz-UZ", { timeZone: "Asia/Tashkent" })}`;
 
   const creative = utm.utm_content || utm.utm_campaign || utm.utm_source || "Sayt";
   const note = [
-    `Shahar: ${city}`,
+    city && `Shahar: ${city}`,
     business && `Biznes: ${business}`,
     ...Object.entries(utm).filter(([, v]) => v).map(([k, v]) => `${k}: ${String(v).slice(0, 80)}`),
   ]
@@ -180,7 +179,7 @@ export async function POST(req: NextRequest) {
       phone: `+${phone}`,
       creative: String(creative).slice(0, 80),
       note,
-      extra: { city, ...(business ? { business } : {}), ...Object.fromEntries(Object.entries(utm).filter(([, v]) => v).map(([k, v]) => [k, String(v).slice(0, 80)])) },
+      extra: { ...(city ? { city } : {}), ...(business ? { business } : {}), ...Object.fromEntries(Object.entries(utm).filter(([, v]) => v).map(([k, v]) => [k, String(v).slice(0, 80)])) },
     }),
   ]);
 

@@ -1,13 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import "@fontsource/oswald/400.css";
-import "@fontsource/oswald/500.css";
-import "@fontsource/oswald/600.css";
-import "@fontsource/oswald/700.css";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/700.css";
 import "./globals.css";
 
 
@@ -16,26 +8,27 @@ const PIXEL = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: "AI xodimlar orqali biznesni oson boshqaring — Bobur Mirzo Yo'ldoshboyev intensivi",
+  title: "30 kunda AI jamoa | AI xodimlar orqali biznesni tizimlashtirish kursi",
   description:
-    "Surxondaryo tadbirkorlari uchun 4 soatlik oflayn intensiv. Denov — 7-noyabr, Termiz — 8-noyabr, 14:00–18:00. Darsning o'zida birinchi AI xodimingizni yasab chiqasiz.",
+    "Bir oyda o'z biznesingiz uchun AI xodimlar jamoasini o'z qo'lingiz bilan qurasiz. 7 dars, oflayn, kichik guruhlarda. Darslar 14-noyabrdan.",
   openGraph: {
-    title: "AI xodimlar orqali biznesni oson boshqaring",
-    description: "Denov — 7-noyabr · Termiz — 8-noyabr · 14:00–18:00. Spiker: Bobur Mirzo Yo'ldoshboyev.",
-    images: ["/og.jpg"],
+    title: "30 kunda AI jamoa",
+    description: "AI xodimlar orqali biznesni tizimlashtirish kursi. Muallif: Bobur Mirzo Yo'ldoshboyev.",
+    images: ["/aj/web/cover.webp"],
     locale: "uz_UZ",
     type: "website",
   },
   icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b1f1a'/><text x='16' y='22' font-size='16' text-anchor='middle' fill='%23d9b46a' font-family='serif' font-weight='700'>BM</text></svg>" },
 };
 
-export const viewport: Viewport = { themeColor: "#052D27", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#031A16", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="uz">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        <link rel="preload" as="image" href="/aj/web/cover.webp" fetchPriority="high" />
+        <link rel="preload" as="font" type="font/woff2" href="/aj/fonts/oswald.woff2" crossOrigin="" />
       </head>
       <body>
         {children}
